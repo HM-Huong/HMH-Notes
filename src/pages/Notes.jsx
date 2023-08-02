@@ -1,11 +1,11 @@
 import { CiSearch } from 'react-icons/ci';
 import { BsPlusLg } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-import { dummyNotes } from '../dummy_notes';
 import NoteItem from '../components/NoteItem';
 
-export default function Notes() {
+export default function Notes({ notes }) {
 	return (
 		<section>
 			<header className='notes__header'>
@@ -17,14 +17,18 @@ export default function Notes() {
 			</header>
 
 			<div className='notes__container'>
-				{dummyNotes.map((note) => (
-					<NoteItem key={note.id} note={note}/>
+				{notes.map((note) => (
+					<NoteItem key={note.id} note={note} />
 				))}
 			</div>
 
-			<Link className='btn add__btn'>
+			<Link to='/create-note' className='btn add__btn'>
 				<BsPlusLg />
 			</Link>
 		</section>
 	);
 }
+
+Notes.propTypes = {
+	notes: PropTypes.array.isRequired,
+};
