@@ -1,5 +1,3 @@
 export default function NotFound() {
-	return (
-		<div>404 Page Not Found</div>
-	)
+	return <p className='empty__notes'>404 Page Not Found</p>;
 }
