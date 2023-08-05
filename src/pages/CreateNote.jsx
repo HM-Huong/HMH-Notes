@@ -1,14 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { IoIosArrowBack } from 'react-icons/io';
-import { useState } from 'react';
-import { v4 as uuid } from 'uuid';
-import PropTypes from 'prop-types';
+import { Link, useNavigate } from "react-router-dom";
+import { IoIosArrowBack } from "react-icons/io";
+import { useState } from "react";
+import { v4 as uuid } from "uuid";
+import PropTypes from "prop-types";
 
-import useCreateDate from '../hooks/useCreateDate';
+import useCreateDate from "../hooks/useCreateDate";
+import escapeHTML from "../utils/escapeHTML";
 
 export default function CreateNote({ setNotes }) {
-	const [title, setTitle] = useState('');
-	const [details, setDetails] = useState('');
+	const [title, setTitle] = useState("");
+	const [details, setDetails] = useState("");
 	const navigate = useNavigate();
 	const date = useCreateDate();
 
@@ -24,13 +25,13 @@ export default function CreateNote({ setNotes }) {
 				date,
 			};
 			setNotes((prevNotes) => [note, ...prevNotes]);
-			navigate('/');
+			navigate("/");
 		}
 	}
 
 	return (
-		<section>
-			<header className='create-note__header'>
+		<section className='fit__container'>
+			<header className='create-note__header fit__content-size'>
 				<Link to='/' className='btn'>
 					<IoIosArrowBack />
 				</Link>
@@ -38,18 +39,26 @@ export default function CreateNote({ setNotes }) {
 					Save
 				</button>
 			</header>
-			<form className='create-note__form' onSubmit={handleSubmit}>
+			<form
+				className='create-note__form fit__item'
+				onSubmit={handleSubmit}
+			>
 				<input
+					className='fit__content-size'
 					type='text'
 					autoFocus
 					placeholder='Title ...'
 					onChange={(e) => setTitle(e.target.value)}
 				/>
-				<textarea
-					rows='20'
+				<div
+					className='fit__item'
+					contentEditable
 					placeholder='Note details ...'
-					onChange={(e) => setDetails(e.target.value)}
-				></textarea>
+					onBlur={(e) => {
+						setDetails(escapeHTML(e.currentTarget.textContent));
+					}}
+					dangerouslySetInnerHTML={{ __html: details }}
+				></div>
 			</form>
 		</section>
 	);

@@ -33,8 +33,8 @@ export default function Notes({ notes }) {
 	}, [showSearch]);
 
 	return (
-		<section>
-			<header className='notes__header'>
+		<section className='fit__container'>
+			<header className='notes__header fit__content-size'>
 				{!showSearch && <h2>My Notes</h2>}
 				{showSearch && (
 					<input
@@ -50,7 +50,7 @@ export default function Notes({ notes }) {
 				</button>
 			</header>
 
-			<div className='notes__container'>
+			<div className='notes__container fit__item'>
 				{filteredNotes.length === 0 && (
 					<p className='empty__notes'>No notes found</p>
 				)}
