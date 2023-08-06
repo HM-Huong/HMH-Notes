@@ -3,66 +3,86 @@ import { BsPlusLg } from "react-icons/bs";
 import { MdClose } from "react-icons/md";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
 
 import NoteItem from "../components/NoteItem";
-import { useEffect, useRef, useState } from "react";
 
 export default function Notes({ notes }) {
 	const [showSearch, setShowSearch] = useState(false);
 	const [searchText, setSearchText] = useState("");
 	const [filteredNotes, setFilteredNotes] = useState(notes);
-	const [notesLists, setNotesLists] = useState({
-		left: [],
-		right: [],
-	});
-	const [leftHeight, setLeftHeight] = useState(0);
-	const [rightHeight, setRightHeight] = useState(0);
+	const notesContainerRef = useRef();
 
-	function handleSearch() {
+	useEffect(() => {
+		const container = notesContainerRef.current;
+
+		function compute() {
+			const dummyElements = container.getElementsByClassName("dummy");
+			while (dummyElements[0]) {
+				dummyElements[0].remove();
+			}
+
+			const noteList = container.children;
+			const maxCol =
+				parseInt(
+					getComputedStyle(container).getPropertyValue("--col")
+				) || 2;
+			let colHeight = Array(maxCol).fill(0);
+
+			for (const note of noteList) {
+				const isMin = minMaxIndex(
+					colHeight,
+					(min, element) => min > element
+				);
+				note.style.order = isMin;
+				colHeight[isMin] += note.getBoundingClientRect().height;
+			}
+
+			let isMax = minMaxIndex(colHeight, (max, element) => max < element);
+			container.style.height = colHeight[isMax] + "px";
+
+			for (let i = 0; i < colHeight.length; i++) {
+				if (i === isMax) continue;
+				let dummy = document.createElement("div");
+				dummy.classList.add("dummy");
+				dummy.style.order = i;
+				dummy.style.height = colHeight[isMax] - colHeight[i] + "px";
+				container.appendChild(dummy);
+			}
+		}
+
+		compute();
+		window.addEventListener("resize", compute);
+		return () => {
+			window.removeEventListener("resize", compute);
+		};
+	}, [filteredNotes]);
+
+	function handleSearch(e) {
+		const content = e.target.value;
+		setSearchText(content);
 		setFilteredNotes(
 			notes.filter((note) => {
 				if (
 					note.title
 						.toLocaleLowerCase()
-						.match(searchText.toLocaleLowerCase())
+						.match(content.toLocaleLowerCase())
 				) {
 					return note;
 				}
 			})
 		);
-
-		setNotesLists({
-			left: [],
-			right: [],
-		});
+		// resetNotesLists();
 	}
 
-	useEffect(handleSearch, [searchText, notes]);
-
-	useEffect(() => {
-		const { right, left } = notesLists;
-		const length = right.length + left.length;
-		if (length >= filteredNotes.length) return;
-
-		if (leftHeight > rightHeight) {
-			right.push(filteredNotes[length]);
-		} else if (leftHeight < rightHeight) {
-			left.push(filteredNotes[length]);
-		} else if (left.length > right.length) {
-			// temporarily fix strict mode 2 times rendering
-			right.push(filteredNotes[length]);
-		} else {
-			left.push(filteredNotes[length]);
-		}
-
-		setNotesLists({ left, right });
-	}, [leftHeight, rightHeight]);
-
-	useEffect(() => {
-		if (!showSearch) {
+	function handleClickSearchButton() {
+		if (showSearch) {
 			setSearchText("");
+			// resetNotesLists();
+			setFilteredNotes(notes);
 		}
-	}, [showSearch]);
+		setShowSearch(!showSearch);
+	}
 
 	return (
 		<section className='fit__container'>
@@ -74,32 +94,25 @@ export default function Notes({ notes }) {
 						autoFocus
 						placeholder='Keyword ...'
 						value={searchText}
-						onChange={(e) => setSearchText(e.target.value)}
+						onChange={(e) => handleSearch(e)}
 					/>
 				)}
 				<button
 					className='btn'
-					onClick={() => setShowSearch((prev) => !prev)}
+					onClick={() => handleClickSearchButton()}
 				>
 					{showSearch ? <MdClose /> : <CiSearch />}
 				</button>
 			</header>
 
-			<div className='fit__item notes__container'>
+			<div className='notes__container' ref={notesContainerRef}>
 				{filteredNotes.length === 0 && (
 					<p className='empty__notes'>No notes found</p>
 				)}
 
-				<NotesList
-					className='notes__list right'
-					list={notesLists.left}
-					setHeight={setLeftHeight}
-				/>
-				<NotesList
-					className='notes__list left'
-					list={notesLists.right}
-					setHeight={setRightHeight}
-				/>
+				{filteredNotes.map((note) => (
+					<NoteItem key={note.id} note={note} />
+				))}
 			</div>
 
 			<Link to='/create-note' className='btn add__btn'>
@@ -113,24 +126,17 @@ Notes.propTypes = {
 	notes: PropTypes.array.isRequired,
 };
 
-function NotesList({ list, className, setHeight }) {
-	const listRef = useRef();
-
-	useEffect(() => {
-		setHeight(listRef.current.scrollHeight);
-	});
-
-	return (
-		<div className={className} ref={listRef}>
-			{list.map((note) => (
-				<NoteItem key={note.id} note={note} />
-			))}
-		</div>
-	);
+/**
+ * return min or max index of `arr` element according to `cmp` callback function
+ * @param arr an array needs to find the min or max element's index
+ * @param cmp Take two arguments: current min or max element and array element. If `cmp` returns true, the current min or max index will be replaced by the element's index being compared
+ */
+function minMaxIndex(arr, cmp) {
+	let res = 0;
+	for (let i = 0; i < arr.length; ++i) {
+		if (cmp(arr[res], arr[i])) {
+			res = i;
+		}
+	}
+	return res;
 }
-
-NotesList.propTypes = {
-	list: PropTypes.array.isRequired,
-	className: PropTypes.string.isRequired,
-	setHeight: PropTypes.func,
-};

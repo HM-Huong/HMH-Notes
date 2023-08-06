@@ -536,6 +536,11 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+dompurify@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.0.5.tgz#eb3d9cfa10037b6e73f32c586682c4b2ab01fbed"
+  integrity sha512-F9e6wPGtY+8KNMRAVfxeCOHU0/NPWMSENNq4pQctuXRqqdEPW7q3CrLbR5Nse044WwacyjHGOMlvNsBe1y6z9A==
+
 es-abstract@^1.19.0, es-abstract@^1.20.4:
   version "1.22.1"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.22.1.tgz#8b4e5fc5cefd7f1660f0f8e1a52900dfbc9d9ccc"

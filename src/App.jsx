@@ -28,6 +28,7 @@ function App() {
 				<Routes>
 					<Route path='/' element={<Notes notes={notes} />}></Route>
 					<Route path='/*' element={<NotFound />}></Route>
+					<Route path='/404' element={<NotFound />}></Route>
 
 					<Route
 						path='/create-note'

@@ -2,19 +2,26 @@ import { IoIosArrowBack } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
+import DOMPurify from "dompurify";
 
 import useCreateDate from "../hooks/useCreateDate";
 import escapeHTML from "../utils/escapeHTML";
 
 export default function EditNote({ notes, setNotes }) {
+	const navigate = useNavigate();
 	const { id } = useParams(); // this is a string
 	// do not use strict equality if you use dummy_notes because the id of dummy note is a number
 	const note = notes.find((item) => item.id == id);
-	const [title, setTitle] = useState(note.title);
-	const [details, setDetails] = useState(note.details);
+	const [title, setTitle] = useState(note?.title || '');
+	const [details, setDetails] = useState(note?.details || '');
 	const date = useCreateDate();
-	const navigate = useNavigate();
+	
+	useLayoutEffect(() => {
+		if (!note) {
+			navigate("/404");
+		}
+	})
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -67,7 +74,9 @@ export default function EditNote({ notes, setNotes }) {
 					onBlur={(e) => {
 						setDetails(escapeHTML(e.currentTarget.textContent));
 					}}
-					dangerouslySetInnerHTML={{ __html: details }}
+					dangerouslySetInnerHTML={{
+						__html: DOMPurify.sanitize(details),
+					}}
 				></div>
 			</form>
 		</section>
