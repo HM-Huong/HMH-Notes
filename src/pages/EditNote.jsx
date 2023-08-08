@@ -2,7 +2,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import xss from "xss";
 
 import useCreateDate from "../hooks/useCreateDate";
@@ -16,11 +16,9 @@ export default function EditNote({ notes, setNotes }) {
 	const [details, setDetails] = useState(note?.details || "");
 	const date = useCreateDate();
 
-	useLayoutEffect(() => {
 		if (!note) {
 			navigate("/404");
 		}
-	});
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -41,6 +39,8 @@ export default function EditNote({ notes, setNotes }) {
 		navigate("/");
 	}
 
+	document.title = title || "HMH Notes";
+
 	return (
 		<section className='fit__container'>
 			<header className='create-note__header fit__content-size'>
@@ -54,10 +54,7 @@ export default function EditNote({ notes, setNotes }) {
 					<RiDeleteBin6Line />
 				</button>
 			</header>
-			<form
-				className='create-note__form fit__item'
-				onSubmit={handleSubmit}
-			>
+			<form className='create-note__form fit__item' onSubmit={handleSubmit}>
 				<input
 					className='fit__content-size'
 					type='text'

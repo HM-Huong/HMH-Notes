@@ -4,13 +4,16 @@ import { MdClose } from "react-icons/md";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-
+import icon from "/icon-notes.svg";
 import NoteItem from "../components/NoteItem";
+import Loading from "../components/Loading";
 
-export default function Notes({ notes }) {
+export default function Notes({ notes, firstRender }) {
 	const [showSearch, setShowSearch] = useState(false);
 	const [searchText, setSearchText] = useState("");
 	const [filteredNotes, setFilteredNotes] = useState(notes);
+	const [loading, setLoading] = useState(firstRender);
+
 	const notesContainerRef = useRef();
 
 	useEffect(() => {
@@ -24,9 +27,7 @@ export default function Notes({ notes }) {
 
 			const noteList = container.children;
 			const maxCol =
-				parseInt(
-					getComputedStyle(container).getPropertyValue("--col")
-				) || 2;
+				parseInt(getComputedStyle(container).getPropertyValue("--col")) || 2;
 			let colHeight = Array(maxCol).fill(0);
 
 			for (const note of noteList) {
@@ -52,6 +53,11 @@ export default function Notes({ notes }) {
 		}
 
 		compute();
+
+		setTimeout(() => {
+			setLoading(false);
+		}, 777);
+
 		window.addEventListener("resize", compute);
 		return () => {
 			window.removeEventListener("resize", compute);
@@ -63,11 +69,7 @@ export default function Notes({ notes }) {
 		setSearchText(content);
 		setFilteredNotes(
 			notes.filter((note) => {
-				if (
-					note.title
-						.toLocaleLowerCase()
-						.match(content.toLocaleLowerCase())
-				) {
+				if (note.title.toLocaleLowerCase().match(content.toLocaleLowerCase())) {
 					return note;
 				}
 			})
@@ -84,10 +86,17 @@ export default function Notes({ notes }) {
 		setShowSearch(!showSearch);
 	}
 
+	document.title = "HMH Notes";
+
 	return (
 		<section className='fit__container'>
+			{loading && <Loading />}
 			<header className='notes__header fit__content-size'>
-				{!showSearch && <h2>My Notes</h2>}
+				{!showSearch && (
+					<h2>
+						<img src={icon} alt='' width='32px' /> My Notes
+					</h2>
+				)}
 				{showSearch && (
 					<input
 						type='text'
@@ -97,10 +106,7 @@ export default function Notes({ notes }) {
 						onChange={(e) => handleSearch(e)}
 					/>
 				)}
-				<button
-					className='btn'
-					onClick={() => handleClickSearchButton()}
-				>
+				<button className='btn' onClick={() => handleClickSearchButton()}>
 					{showSearch ? <MdClose /> : <CiSearch />}
 				</button>
 			</header>
@@ -110,7 +116,6 @@ export default function Notes({ notes }) {
 					{filteredNotes.length === 0 && (
 						<p className='empty__notes'>No notes found</p>
 					)}
-
 					{filteredNotes.map((note) => (
 						<NoteItem key={note.id} note={note} />
 					))}
@@ -126,12 +131,13 @@ export default function Notes({ notes }) {
 
 Notes.propTypes = {
 	notes: PropTypes.array.isRequired,
+	firstRender: PropTypes.bool.isRequired,
 };
 
 /**
  * return min or max index of `arr` element according to `cmp` callback function
  * @param arr an array needs to find the min or max element's index
- * @param cmp Take two arguments: current min or max element and array element. If `cmp` returns true, the current min or max index will be replaced by the element's index being compared
+ * @param cmp Take two arguments: current min or max element and an array element. If `cmp` returns true, the current min or max index will be replaced by the element's index being compared
  */
 function minMaxIndex(arr, cmp) {
 	let res = 0;

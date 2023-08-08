@@ -29,6 +29,8 @@ export default function CreateNote({ setNotes }) {
 		}
 	}
 
+	document.title = title || "HMH Notes";
+
 	return (
 		<section className='fit__container'>
 			<header className='create-note__header fit__content-size'>
@@ -39,10 +41,7 @@ export default function CreateNote({ setNotes }) {
 					Save
 				</button>
 			</header>
-			<form
-				className='create-note__form fit__item'
-				onSubmit={handleSubmit}
-			>
+			<form className='create-note__form fit__item' onSubmit={handleSubmit}>
 				<input
 					className='fit__content-size'
 					type='text'
