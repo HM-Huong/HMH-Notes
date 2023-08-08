@@ -137,14 +137,6 @@ h2 {
 	align-content: flex-start;
 }
 
-.notes__list {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-	width: calc(50% - 1rem / 2);
-	height: fit-content;
-}
-
 .empty__notes {
 	position: absolute;
 	left: 50%;

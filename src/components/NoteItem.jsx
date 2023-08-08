@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import DOMPurify from "dompurify";
+import xss from "xss";
 
 export default function NoteItem({ note }) {
 	return (
@@ -11,7 +11,7 @@ export default function NoteItem({ note }) {
 					<div
 						className='note__details'
 						dangerouslySetInnerHTML={{
-							__html: DOMPurify.sanitize(note.details),
+							__html: xss(note.details),
 						}}
 					></div>
 				</div>

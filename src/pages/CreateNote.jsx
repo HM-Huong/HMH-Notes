@@ -3,9 +3,9 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
+import xss from "xss";
 
 import useCreateDate from "../hooks/useCreateDate";
-import escapeHTML from "../utils/escapeHTML";
 
 export default function CreateNote({ setNotes }) {
 	const [title, setTitle] = useState("");
@@ -55,9 +55,9 @@ export default function CreateNote({ setNotes }) {
 					contentEditable
 					placeholder='Note details ...'
 					onBlur={(e) => {
-						setDetails(escapeHTML(e.currentTarget.textContent));
+						setDetails(xss(e.currentTarget.innerHTML));
 					}}
-					dangerouslySetInnerHTML={{ __html: details }}
+					dangerouslySetInnerHTML={{ __html: xss(details) }}
 				></div>
 			</form>
 		</section>

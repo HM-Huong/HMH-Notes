@@ -105,14 +105,16 @@ export default function Notes({ notes }) {
 				</button>
 			</header>
 
-			<div className='notes__container' ref={notesContainerRef}>
-				{filteredNotes.length === 0 && (
-					<p className='empty__notes'>No notes found</p>
-				)}
+			<div className='fit__item'>
+				<div className='notes__container' ref={notesContainerRef}>
+					{filteredNotes.length === 0 && (
+						<p className='empty__notes'>No notes found</p>
+					)}
 
-				{filteredNotes.map((note) => (
-					<NoteItem key={note.id} note={note} />
-				))}
+					{filteredNotes.map((note) => (
+						<NoteItem key={note.id} note={note} />
+					))}
+				</div>
 			</div>
 
 			<Link to='/create-note' className='btn add__btn'>
