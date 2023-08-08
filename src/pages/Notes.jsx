@@ -32,7 +32,7 @@ export default function Notes({ notes }) {
 			for (const note of noteList) {
 				const isMin = minMaxIndex(
 					colHeight,
-					(min, element) => min > element
+					(min, element) => min > element + 100
 				);
 				note.style.order = isMin;
 				colHeight[isMin] += note.getBoundingClientRect().height;

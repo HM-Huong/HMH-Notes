@@ -24,7 +24,7 @@ function App() {
 
 	return (
 		<main id='app'>
-			<BrowserRouter>
+			<BrowserRouter basename='/HMH-Notes'>
 				<Routes>
 					<Route path='/' element={<Notes notes={notes} />}></Route>
 					<Route path='/*' element={<NotFound />}></Route>
